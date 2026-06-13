@@ -141,6 +141,23 @@
   .shot .cap b{color:var(--ink)}
 
   .diagram{width:100%;border-radius:16px;border:1px solid #eef2f7;margin:16px 0;background:#fff;box-shadow:0 6px 18px -14px rgba(15,23,42,.4)}
+
+  /* 모델 섹션 — 시각 요소 */
+  #concept h3{font-size:17px;font-weight:800;margin:22px 0 8px;color:var(--ink)}
+  .brain{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:12px 0}
+  .bcard{border-radius:16px;padding:16px;color:#fff;box-shadow:0 10px 22px -14px rgba(15,23,42,.5)}
+  .bcard .bi{font-size:30px;line-height:1}
+  .bcard h4{margin:8px 0 2px;font-size:16px;font-weight:800}
+  .bcard .mean{font-size:13.5px;opacity:.96;margin:0}
+  .bcard .ana{font-size:12.5px;opacity:.95;margin-top:9px;border-top:1px solid rgba(255,255,255,.3);padding-top:7px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .chip2{background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:11px 15px;font-size:13px;color:var(--soft);flex:1;min-width:150px}
+  .chip2 b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+  .bars{margin:12px 0;display:flex;flex-direction:column;gap:9px}
+  .barrow{display:flex;align-items:center;gap:12px}
+  .barrow .lab{width:96px;flex:none;text-align:right;color:var(--soft);font-weight:700;font-size:13.5px}
+  .barrow .track{flex:1;background:#f1f5f9;border-radius:999px;height:24px;overflow:hidden}
+  .barrow .fill{height:100%;border-radius:999px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font-size:12.5px;font-weight:800;min-width:42px}
   details{background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:4px 16px;margin:10px 0}
   summary{cursor:pointer;font-weight:700;padding:12px 0}
   details[open] summary{color:var(--blue)}
@@ -368,48 +385,64 @@
 
       <img class="diagram" src="img/diagram_gated.svg" alt="mAb-GATED: 입력 이웃 → PubMedBERT → GAT → Transformer → 가려진 안정성 노드 예측">
 
-      <h3 style="margin:20px 0 6px">② 입력은 어떻게 생겼나</h3>
-      <p>문제 하나(샘플) = 정답 노드 1개를 가리고, 그 <b>이웃들</b>을 보여줍니다.</p>
-      <table class="kv">
-        <tr><td>이웃 구성</td><td>6개 카테고리 × 각 5개 = 최대 <b>30개</b> 이웃 노드</td></tr>
-        <tr><td>각 이웃이 담는 정보</td><td>[어떤 노드 · 어느 카테고리 · 무슨 관계 · <b>직접(1칸)인가 간접(2칸)인가</b>]</td></tr>
-        <tr><td>빈도 가중</td><td>자주 보고된 관계일수록 더 자주 등장 → 중요한 단서에 무게를 더 줌</td></tr>
-      </table>
-      <div class="note tip">💡 '간접(2칸)'이란? <b>원인의 원인</b>. 예: <code>저장온도 → 분해산물 → 응집</code> 처럼 한 다리 건넌 단서도 함께 봅니다. (그래프라서 가능한 강점)</div>
+      <h3>② 입력 — '이웃'을 보여준다</h3>
+      <div class="chips">
+        <div class="chip2"><b>이웃 30개</b>6개 카테고리 × 각 5개</div>
+        <div class="chip2"><b>직접 + 간접</b>'원인의 원인'까지 함께</div>
+        <div class="chip2"><b>빈도 가중</b>자주 나온 관계에 무게 ↑</div>
+      </div>
+      <div class="note tip">💡 '간접'이란 <b>원인의 원인</b>. 예: <code>저장온도 → 분해산물 → 응집</code> 처럼 한 다리 건넌 단서도 봅니다(그래프의 강점).</div>
 
-      <h3 style="margin:20px 0 6px">③ 모델의 4단계 두뇌</h3>
-      <table class="kv">
-        <tr><td>① PubMedBERT 임베딩</td><td>단어를 <b>'의미 숫자'</b>로. sucrose·trehalose가 비슷하다는 걸 미리 앎 — <i>의학 사전을 주고 시작</i>해 빠르고 똑똑.</td></tr>
-        <tr><td>② GAT (그래프 어텐션)</td><td>그래프에서 <b>이웃 정보를 모으되 중요한 이웃에 더 집중.</b> (회의에서 핵심 발언자에게 더 귀 기울이기)</td></tr>
-        <tr><td>③ Transformer 인코더</td><td>여러 원인을 <b>서로 비교·종합</b>해 하나의 '문맥'으로. (단서를 종합하는 탐정)</td></tr>
-        <tr><td>④ 디코더 + 출력</td><td>그 문맥으로 <b>정답 노드를 생성.</b> 단, 같은 종류(물리/화학/생물) 후보 안에서만 고름(공정한 객관식).</td></tr>
-      </table>
-      <p style="color:var(--soft);font-size:13.5px">학습되는 숫자(파라미터)는 약 <b>320만 개</b> — 요즘 AI 기준 작지만 충분히 똑똑합니다.</p>
+      <h3>③ 모델의 4단계 두뇌</h3>
+      <div class="brain">
+        <div class="bcard" style="background:linear-gradient(135deg,#6366f1,#4338ca)">
+          <div class="bi">🔤</div><h4>① PubMedBERT</h4>
+          <p class="mean">단어에 '의미'를 입힘</p>
+          <div class="ana">📖 외국어 사전을 쥐어주고 시작 → 똑똑하게 출발</div>
+        </div>
+        <div class="bcard" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+          <div class="bi">🕸️</div><h4>② GAT</h4>
+          <p class="mean">이웃 정보를 끌어모음</p>
+          <div class="ana">🗣️ 회의에서 핵심 발언자에 더 집중</div>
+        </div>
+        <div class="bcard" style="background:linear-gradient(135deg,#a855f7,#7e22ce)">
+          <div class="bi">🧩</div><h4>③ Transformer</h4>
+          <p class="mean">단서를 종합해 '문맥'으로</p>
+          <div class="ana">🔍 단서를 잇는 탐정</div>
+        </div>
+        <div class="bcard" style="background:linear-gradient(135deg,#f87171,#dc2626)">
+          <div class="bi">✅</div><h4>④ 디코더+출력</h4>
+          <p class="mean">가려진 답을 생성</p>
+          <div class="ana">같은 종류 후보 중 객관식으로 고름</div>
+        </div>
+      </div>
+      <p style="color:var(--soft);font-size:13px;text-align:center">학습되는 숫자(파라미터) 약 <b>320만 개</b> — 작지만 충분히 똑똑</p>
 
-      <h3 style="margin:20px 0 6px">④ 어떻게 '학습'하나 — 오답노트로 공부</h3>
-      <p>수천 문제(이웃 → 정답)를 풀게 하고, <b>틀리면 정답 쪽으로 내부 숫자를 아주 조금씩 조정</b>(역전파). 수백 번 반복하면 점점 잘 맞혀요.</p>
-      <table class="kv">
-        <tr><td>70 / 15 / 15</td><td>공부용 · 모의고사 · 실전. <b>실전(test)은 학습에 절대 안 씀</b>(공정한 평가)</td></tr>
-        <tr><td>constrained 손실</td><td>물리/화학/생물 <b>같은 종류 안에서만 채점</b> → 난이도를 공정하게</td></tr>
-        <tr><td>early stopping</td><td>모의고사 점수가 더 안 오르면 <b>자동 정지</b>(과적합 방지)</td></tr>
-      </table>
+      <h3>④ 학습 — '오답노트로 공부'</h3>
+      <p>틀리면 정답 쪽으로 내부 숫자를 조금씩 조정, 수백 번 반복하면 잘 맞혀요.</p>
+      <div class="chips">
+        <div class="chip2"><b>70 / 15 / 15</b>공부 · 모의고사 · 실전</div>
+        <div class="chip2"><b>공정 채점</b>같은 종류 안에서만 비교</div>
+        <div class="chip2"><b>자동 정지</b>안 늘면 멈춤(과적합 ↓)</div>
+      </div>
 
-      <h3 style="margin:20px 0 6px">⑤ 점수 읽는 법</h3>
-      <table class="kv">
-        <tr><td>Hits@1</td><td>정답을 <b>1등</b>으로 맞힌 비율 (높을수록 좋음)</td></tr>
-        <tr><td>Hits@3</td><td>정답이 <b>상위 3개</b> 안에 든 비율</td></tr>
-        <tr><td>MRR</td><td>정답 순위의 역수 평균 (1등=1.0, 2등=0.5, 3등=0.33…) → 전체 순위 품질</td></tr>
-      </table>
-      <p>비교 대상(베이스라인): <b>랜덤</b>(찍기) · <b>빈도</b>(많이 나온 답 찍기) · <b>DistMult</b>(단순 그래프 모델). 이들을 크게 앞서야 '진짜 학습했다'고 할 수 있어요.</p>
+      <h3>⑤ 점수 읽는 법</h3>
+      <div class="chips">
+        <div class="chip2"><b>Hits@1</b>정답을 1등으로 맞힌 비율</div>
+        <div class="chip2"><b>Hits@3</b>정답이 상위 3개 안</div>
+        <div class="chip2"><b>MRR</b>순위 역수 평균(1등=1.0)</div>
+      </div>
 
-      <h3 style="margin:20px 0 6px">⑥ 결과</h3>
-      <table class="kv">
-        <tr><td>랜덤 / 빈도 / DistMult</td><td>Hits@1 8.6% / 36.6% / 16.8%</td></tr>
-        <tr><td><b>mAb-GATED</b></td><td><b>Hits@1 84.6%</b>(테스트) · MRR 0.88 · <b>화학 안정성 99%</b> — 단순 기법을 압도</td></tr>
-      </table>
-      <p>→ "문헌에 흩어진 40년치 인과 패턴은 <b>실제로 학습 가능</b>하다"가 입증됐습니다.</p>
+      <h3>⑥ 결과 — 얼마나 잘 맞히나 (Hits@1)</h3>
+      <div class="bars">
+        <div class="barrow"><span class="lab">랜덤(찍기)</span><div class="track"><div class="fill" style="width:9%;background:#94a3b8">8.6%</div></div></div>
+        <div class="barrow"><span class="lab">DistMult</span><div class="track"><div class="fill" style="width:17%;background:#94a3b8">16.8%</div></div></div>
+        <div class="barrow"><span class="lab">빈도</span><div class="track"><div class="fill" style="width:37%;background:#a78bfa">36.6%</div></div></div>
+        <div class="barrow"><span class="lab">mAb-GATED</span><div class="track"><div class="fill" style="width:85%;background:linear-gradient(90deg,#10b981,#059669)">84.6%</div></div></div>
+      </div>
+      <p style="text-align:center">화학 안정성은 <b>99%</b> 🎯 → "문헌의 40년치 인과 패턴은 <b>실제로 학습 가능</b>"이 입증됐습니다.</p>
 
-      <div class="note tip">🚀 <b>직접 학습해 보기:</b> <a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step4_gated.ipynb" target="_blank" rel="noopener">step4_gated 노트북</a> (Colab + 무료 GPU). 데이터가 적으면 공개 엣지로 자동 학습하고, 노트북 안에도 각 부분 설명이 들어 있어요.</div>
+      <div class="note tip">🚀 <b>직접 학습해 보기:</b> <a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step4_gated.ipynb" target="_blank" rel="noopener">step4_gated 노트북</a> (Colab + 무료 GPU). 노트북 안에도 각 부분 쉬운 설명이 들어 있어요.</div>
     </div>
   </section>
 
