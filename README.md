@@ -9,7 +9,7 @@
 
 원본 연구: STARG-LEE / [mab-causal-network-v2](https://github.com/STARG-LEE/mab-causal-network-v2) · 인터랙티브 그래프: [웹페이지](https://starg-lee.github.io/mab-causal-network-v2/)
 
-![네트워크 백본 예시](images/03_network_backbone.png)
+![실제 인터랙티브 그래프 (D3.js)](images/real_graph.png)
 
 ### 🧭 이 연구를 한눈에 (Background → Problem → Objective)
 - **배경:** IV→SC 전환이 촉발한 40년 연구는 **두 질문**을 쌓았다 — ①*무엇이* 안정성을 좌우하나(결정요인: pH·부형제·서열·구조·스트레스), ②안정성은 *무엇을* 좌우하나(결과: 효능·면역원성·약동학·제조성). 이 둘이 `결정요인 → 안정성 → 결과` 사슬을 이룬다.
