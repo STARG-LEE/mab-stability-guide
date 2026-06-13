@@ -85,7 +85,7 @@ mab_teaching_package/
 
 ## 🔁 파이프라인 한눈에
 
-![AI 파이프라인 흐름](images/diagram_pipeline.png)
+![AI 파이프라인 흐름](images/diagram_pipeline.svg)
 
 ```
 STEP1 수집        STEP2 필터        STEP3 추출/정규화/집계        시각화 + STEP4 예측

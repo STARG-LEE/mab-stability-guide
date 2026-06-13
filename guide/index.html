@@ -183,11 +183,11 @@
       <p><b>배경</b> — IV(정맥주사)를 SC(피하주사)로 바꾸려면 약을 고농도로 만들어야 하고, 그러면 <b>응집·점도</b> 같은 불안정 문제가 커집니다. 그래서 두 가지 질문이 40년간 쌓였어요:
       ① <b>무엇이</b> 안정성을 좌우하나? ② 안정성은 <b>무엇을</b> 좌우하나? 이 둘을 이으면 아래 사슬이 됩니다.</p>
 
-      <img class="diagram" src="img/diagram_chain.png" alt="결정요인 → 안정성 지표 → 임상·품질 결과 인과 사슬">
+      <img class="diagram" src="img/diagram_chain.svg" alt="결정요인 → 안정성 지표 → 임상·품질 결과 인과 사슬">
 
       <p><b>문제</b> — 개별 논문은 한두 고리만 따로 다뤄, 전체를 종합한 지도가 없었습니다. &nbsp;<b>목표</b> — ① AI로 관계 채굴 → ② 인과 지식그래프 → ③ <b>mAb-GATED</b> 로 "이 패턴이 학습 가능한가" 검증.</p>
 
-      <img class="diagram" src="img/diagram_pipeline.png" alt="AI 파이프라인: PubMed 수집 → 필터 → 추출 → 그래프 → GATED 예측">
+      <img class="diagram" src="img/diagram_pipeline.svg" alt="AI 파이프라인: PubMed 수집 → 필터 → 추출 → 그래프 → GATED 예측">
       <p style="text-align:center;color:var(--soft);font-size:13px;margin:0">전체 흐름 한눈에 보기 — 숫자는 실제 연구 규모입니다.</p>
 
       <p class="lead" style="margin-top:18px">이 그림책으로 따라 할 수 있는 것 — <b>아래 3가지</b></p>
@@ -304,7 +304,7 @@
     <div class="card">
       <h2><span class="num" style="background:linear-gradient(135deg,#8b5cf6,#db2777)">🧠</span>GATED 모델은? (개념만)</h2>
       <p class="lead">한 줄 요약: <b>그래프 속 “빈칸 채우기”</b> 입니다.</p>
-      <img class="diagram" src="img/diagram_gated.png" alt="mAb-GATED 빈칸 채우기: 이웃 노드 → PubMedBERT → GAT → Transformer → 가려진 안정성 노드 예측">
+      <img class="diagram" src="img/diagram_gated.svg" alt="mAb-GATED 빈칸 채우기: 이웃 노드 → PubMedBERT → GAT → Transformer → 가려진 안정성 노드 예측">
       <div class="codebox">
 <span class="c"># 주변 이웃(원인 조건)만 보고, 가려진 '안정성 지표'를 맞히기</span>
 보기 : high concentration(고농도), agitation(진탕), low pH …  <span class="c"># ← 결정요인</span>
