@@ -142,7 +142,9 @@ s2.append(md(
 "| **필요** | OpenAI API 키 |\n"
 "\n"
 "> 🔑 Colab 왼쪽 🔑(보안 비밀)에 `OPENAI_API_KEY` 를 넣거나, 아래 셀 실행 시 입력하세요.\n"
-"> 💰 `gpt-4o-mini` 기준 논문 수십 편 = 수십 원 수준. (원본 연구는 gpt-5-mini 사용)"
+"> 💰 기본 모델은 **gpt-5-mini**(원본 연구와 동일 — 더 똑똑하지만 조금 느리고 비쌉니다). 소규모면 수백 원 수준. 비용을 줄이려면 코드에서 `MODEL='gpt-4o-mini'` 로 바꾸면 됩니다.\n"
+"\n"
+"**쉽게 말하면:** 검색은 그물처럼 넓게 던지니 엉뚱한 논문도 딸려 옵니다. 여기서 GPT가 문지기가 되어 *진짜 안정성 논문만* 통과시켜요."
 ))
 s2.append(code("!pip install -q openai pandas\nprint('준비 완료')"))
 s2.append(code(
@@ -161,7 +163,7 @@ s2.append(code(
 "\n"
 "from openai import OpenAI\n"
 "client = OpenAI(api_key=OPENAI_KEY)\n"
-"MODEL      = 'gpt-4o-mini'   # 저렴·범용 (원본: gpt-5-mini)\n"
+"MODEL      = 'gpt-5-mini'    # 원본 연구와 동일 (비용 줄이려면 'gpt-4o-mini' 로 바꿔도 됩니다)\n"
 "BATCH_SIZE = 10              # GPT 한 번에 판단할 논문 수\n"
 "print('OpenAI 준비 완료, 모델:', MODEL)"
 ))
@@ -204,7 +206,7 @@ s2.append(code(
 "        try:\n"
 "            r = client.chat.completions.create(model=MODEL,\n"
 "                messages=[{'role':'system','content':SYSTEM_PROMPT},{'role':'user','content':user}],\n"
-"                max_completion_tokens=2000)\n"
+"                max_completion_tokens=8000)   # gpt-5-mini는 추론 토큰을 쓰므로 넉넉히\n"
 "            txt = r.choices[0].message.content.replace('```json','').replace('```','').strip()\n"
 "            return json.loads(txt)\n"
 "        except Exception as e:\n"
@@ -263,7 +265,9 @@ s3.append(md(
 "| **필요** | OpenAI API 키 |\n"
 "\n"
 "```\nStage 2a 추출   초록 → (원인, 관계, 결과) 삼중항\nStage 2b 표준화  같은 뜻 표현을 표준 용어로 통일\nStage 2c 집계   (원인,관계,결과)별 빈도·논문수 → 엣지 표\n```\n"
-"> 💰 비용 절약을 위해 기본 `LIMIT=30` 편만 처리합니다. 키우려면 값을 올리세요."
+"> 💰 기본 모델은 **gpt-5-mini**(원본과 동일). 비용을 위해 기본 `LIMIT=30` 편만 처리합니다(키우려면 값↑). 더 싸게 하려면 `MODEL='gpt-4o-mini'`.\n"
+"\n"
+"**쉽게 말하면:** GPT가 논문을 정독하며 *\"무엇이 무엇에 영향을 준다\"* 는 문장을 찾아 **(원인 → 관계 → 결과)** 카드로 만들고, 같은 카드가 몇 번 나왔는지 세는 단계예요."
 ))
 s3.append(code("!pip install -q openai pandas\nprint('준비 완료')"))
 s3.append(code(
@@ -282,7 +286,7 @@ s3.append(code(
 "from openai import OpenAI\n"
 "client = OpenAI(api_key=OPENAI_KEY)\n"
 "\n"
-"MODEL           = 'gpt-4o-mini'   # 원본: gpt-5-mini\n"
+"MODEL           = 'gpt-5-mini'    # 원본 연구와 동일 (비용 줄이려면 'gpt-4o-mini')\n"
 "LIMIT           = 30              # 처리할 관련 논문 수 (비용)\n"
 "NORM_BATCH_SIZE = 80              # 표준화 배치 크기\n"
 "print('준비 완료, 모델:', MODEL)"
@@ -347,7 +351,7 @@ s3.append(code(
 "        try:\n"
 "            r = client.chat.completions.create(model=MODEL,\n"
 "                messages=[{'role':'system','content':EXTRACTION_SYSTEM_PROMPT},{'role':'user','content':user}],\n"
-"                max_completion_tokens=4000)\n"
+"                max_completion_tokens=16000)   # gpt-5-mini 추론+JSON 여유 (원본 20000)\n"
 "            txt = r.choices[0].message.content.replace('```json','').replace('```','').strip()\n"
 "            return json.loads(txt).get('relations', [])\n"
 "        except Exception as e:\n"
@@ -394,7 +398,7 @@ s3.append(code(
 "            try:\n"
 "                r = client.chat.completions.create(model=MODEL,\n"
 "                    messages=[{'role':'system','content':NORMALIZATION_SYSTEM_PROMPT},{'role':'user','content':prompt}],\n"
-"                    max_completion_tokens=4000)\n"
+"                    max_completion_tokens=12000)\n"
 "                txt = r.choices[0].message.content.replace('```json','').replace('```','').strip()\n"
 "                mapping.update(json.loads(txt)); break\n"
 "            except Exception as e:\n"
@@ -532,6 +536,68 @@ cells4[7]["source"] = new_cell7
 
 # 최종 저장 셀(32)에서 google.colab files / drive 의존 제거 — 그대로 둬도 무방하나 download 호출만 보호
 # (원본은 shutil.copy 실패 시 colab_files.download; 로컬이면 copy 성공하므로 그대로 둠)
+
+# ── 모델/학습/평가 앞에 '쉬운 설명' markdown 삽입 ──
+EXPLAIN_BERT = (
+"## 🔤 단어에 '의미'를 입히기 (PubMedBERT)\n"
+"\n"
+"컴퓨터는 'sucrose'와 'trehalose'가 비슷한 당류라는 걸 모릅니다. 그래서 **PubMedBERT**(의학 논문으로 학습된 언어모델)로 "
+"각 노드 이름을 **768개 숫자(벡터)** 로 바꿔요. 뜻이 비슷한 단어는 숫자도 비슷해집니다.\n"
+"\n"
+"> 🧩 비유: **외국어 사전**. 백지에서 배우지 않고 *이미 뜻을 아는 사전*을 주고 시작 → 학습이 빠르고 똑똑해집니다.\n"
+"> 아래 유사도 출력에서 `sucrose ↔ trehalose` 점수가 높게 나오면 성공!"
+)
+EXPLAIN_MODEL = (
+"## 🧠 모델의 4단계 두뇌 — 한 번에 이해하기\n"
+"\n"
+"아래 코드가 **mAb-GATED 모델**입니다. 길어 보여도 하는 일은 4단계예요:\n"
+"\n"
+"```\n"
+"① 임베딩       이웃 노드를 [노드 + 카테고리 + 관계 + 거리] 숫자로 표현\n"
+"② GAT          그래프에서 '이웃의 정보'를 끌어모음 (중요한 이웃에 더 집중)\n"
+"③ 인코더       여러 원인 조건을 서로 비교·종합해 '문맥' 하나로\n"
+"④ 디코더+출력  그 문맥으로 가려진 안정성 노드를 '생성' (같은 종류 후보 중에서만)\n"
+"```\n"
+"\n"
+"- **GAT(Graph Attention)**: 회의에서 *핵심 발언자에게 더 귀 기울이듯*, 중요한 이웃에 가중치를 더 줍니다.\n"
+"- **Transformer**: 단서들을 종합하는 *탐정* — 어떤 원인이 어떤 원인과 함께 작용하는지 봅니다.\n"
+"- 학습되는 숫자(파라미터) 약 **320만 개** — 작지만 충분히 똑똑합니다."
+)
+EXPLAIN_TRAIN = (
+"## 🏋️ 학습 = '오답노트로 공부하기'\n"
+"\n"
+"모델에게 수천 개 문제(이웃 → 정답)를 보여주고, **틀리면 정답 쪽으로 내부 숫자를 아주 조금씩 조정**합니다(역전파). "
+"이걸 수백 번 반복하면 점점 잘 맞혀요.\n"
+"\n"
+"- **train/valid/test 70/15/15** = 공부용 · 모의고사 · 실전. 실전(test)은 학습에 절대 안 씁니다(공정).\n"
+"- **constrained 손실** = 물리/화학/생물 *같은 종류 안에서만* 채점 → 난이도를 공정하게.\n"
+"- **early stopping** = 모의고사 점수가 더 안 오르면 자동으로 멈춰 과적합 방지.\n"
+"\n"
+"> 🖥️ 아래 셀은 GPU에서 몇 분 걸립니다. 로그의 `valid MRR` 이 올라가는 걸 지켜보세요."
+)
+EXPLAIN_EVAL = (
+"## 📊 점수 읽는 법 (MRR · Hits)\n"
+"\n"
+"- **Hits@1** — 정답을 **1등**으로 맞힌 비율 (높을수록 좋음)\n"
+"- **Hits@3** — 정답이 **상위 3개** 안에 든 비율\n"
+"- **MRR** — 정답 순위의 역수 평균 (1등=1.0, 2등=0.5, 3등=0.33…) → 전체적인 순위 품질\n"
+"\n"
+"비교 대상(베이스라인): **랜덤**(찍기) · **빈도**(많이 나온 답) · **DistMult**(단순 그래프 모델). "
+"mAb-GATED가 이들을 크게 앞서면 *'문헌의 인과 패턴을 진짜 학습했다'* 는 뜻입니다.\n"
+"> 원본 논문: 테스트 **Hits@1 84.6%**, 화학 안정성 **99%**. (소규모로 돌리면 수치는 다릅니다)"
+)
+
+def insert_before(cells, marker, text):
+    for i, c in enumerate(cells):
+        s = c["source"] if isinstance(c["source"], str) else "".join(c["source"])
+        if marker in s:
+            cells.insert(i, md(text)); return True
+    return False
+
+insert_before(cells4, "SentenceTransformer(CONFIG", EXPLAIN_BERT)
+insert_before(cells4, "class GATLayer", EXPLAIN_MODEL)
+insert_before(cells4, "Training mAb-GATED", EXPLAIN_TRAIN)
+insert_before(cells4, "def run_evaluation", EXPLAIN_EVAL)
 
 cells4 = [md(INTRO4)] + cells4
 write_nb(cells4, "step4_gated.ipynb")

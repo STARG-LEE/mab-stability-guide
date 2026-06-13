@@ -134,7 +134,7 @@ n1.append(code(
 "    OPENAI_KEY = getpass('OpenAI API key 입력 (없으면 그냥 Enter): ').strip()\n"
 "\n"
 "USE_GPT = bool(OPENAI_KEY)\n"
-"MODEL   = 'gpt-4o-mini'   # 저렴하고 충분히 똑똑한 모델 (연구 원본은 gpt-5-mini 사용)\n"
+"MODEL   = 'gpt-5-mini'   # 원본 연구와 동일 (비용 줄이려면 'gpt-4o-mini')\n"
 "print('🟢 GPT 사용 모드' if USE_GPT else '⚪ 키 없음 → STEP 2·3 건너뜀, STEP 4에서 샘플 데이터 사용')"
 ))
 n1.append(code(
@@ -157,7 +157,7 @@ n1.append(code(
 "                model=MODEL,\n"
 "                messages=[{'role':'system','content':FILTER_SYS},\n"
 "                          {'role':'user','content':f'Title: {title}\\nAbstract: {abstract[:1500]}'}],\n"
-"                max_completion_tokens=120)\n"
+"                max_completion_tokens=4000)\n"
 "            txt = r.choices[0].message.content.replace('```json','').replace('```','').strip()\n"
 "            return bool(json.loads(txt).get('relevant', True))\n"
 "        except Exception as e:\n"
@@ -211,7 +211,7 @@ n1.append(code(
 "            model=MODEL,\n"
 "            messages=[{'role':'system','content':EXTRACT_SYS},\n"
 "                      {'role':'user','content':f'Title: {title}\\nAbstract: {abstract[:2500]}'}],\n"
-"            max_completion_tokens=1500)\n"
+"            max_completion_tokens=16000)\n"
 "        txt = r.choices[0].message.content.replace('```json','').replace('```','').strip()\n"
 "        return json.loads(txt).get('relations', [])\n"
 "    except Exception as e:\n"

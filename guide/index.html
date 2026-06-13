@@ -166,12 +166,13 @@
   <!-- 목차 -->
   <nav class="progress">
     <a href="#what">이게 뭐예요?</a>
+    <a href="#steps">단계 자세히</a>
     <a href="#ready">준비물</a>
     <a href="#secret">비밀 등록</a>
     <a href="#run">실행하기</a>
     <a href="#full">전체 재현</a>
     <a href="#graph">그래프 읽기</a>
-    <a href="#concept">GATED 개념</a>
+    <a href="#concept">모델 자세히</a>
     <a href="#faq">문제 해결</a>
   </nav>
 
@@ -198,7 +199,39 @@
         <div class="prog b3"><span class="tag">탐색</span><div class="big">🕸️</div><h3>인터랙티브 그래프</h3><small>마우스로 끌고 확대·필터, 내 CSV 업로드</small></div>
       </div>
 
-      <div class="note tip">💡 <b>설명은 GATED 모델까지, 실습은 "그래프 그리기까지"</b> 입니다. GATED 학습은 GPU·DB가 필요해 개념만 다뤄요(아래 <a href="#concept">GATED 개념</a>).</div>
+      <div class="note tip">💡 이 그림책은 <b>모든 단계를 직접 실행</b>할 수 있어요 — 논문 수집부터 그래프, <b>GATED 모델 학습까지</b>(Colab 무료 GPU). 아래에서 각 단계와 모델을 <b>하나하나 쉽게</b> 설명합니다.</div>
+    </div>
+  </section>
+
+  <!-- 1.5 단계별 자세히 -->
+  <section id="steps">
+    <div class="card">
+      <h2><span class="num" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">📦</span>4단계가 실제로 하는 일 (쉽게)</h2>
+      <p class="lead">파이프라인을 한 단계씩, 코드가 무엇을 하는지까지 풀어봅니다. 각 단계는 <b>CSV 파일</b>을 다음 단계로 넘겨요.</p>
+
+      <div class="step" style="padding-left:16px;border-left:6px solid #3b82f6">
+        <h3 style="margin:4px 0">STEP 1 · 수집 (Crawling)</h3>
+        <p style="margin:6px 0">PubMed(무료 논문 도서관)에 <b>검색어를 던져 제목·초록을 받아옵니다.</b> 검색어를 '서열→구조→제형·스트레스→안정성→품질→약동학' 인과사슬 갈래로 설계해 길목을 빠짐없이 훑어요.</p>
+        <p style="margin:6px 0;color:var(--soft);font-size:13.5px">입력: 없음 · 출력: <code>step1_abstracts.csv</code> · 원본 규모 62,281편</p>
+      </div>
+
+      <div class="step" style="padding-left:16px;border-left:6px solid #14b8a6">
+        <h3 style="margin:4px 0">STEP 2 · 필터 (Filtering)</h3>
+        <p style="margin:6px 0">검색은 넓게 던지니 엉뚱한 논문도 딸려 옵니다. <b>GPT가 문지기</b>가 되어 한 편씩 "진짜 mAb 안정성 메커니즘 논문인가?"를 판단해 통과/탈락(+한 줄 근거)을 매겨요. 원본에선 약 9%만 통과.</p>
+        <p style="margin:6px 0;color:var(--soft);font-size:13.5px">입력: step1 CSV · 출력: <code>step2_filtered.csv</code> (relevant=1/0)</p>
+      </div>
+
+      <div class="step" style="padding-left:16px;border-left:6px solid #8b5cf6">
+        <h3 style="margin:4px 0">STEP 3 · 추출·표준화·집계 ⭐</h3>
+        <p style="margin:6px 0">파이프라인의 핵심. GPT가 초록을 정독하며 <b>(원인 → 관계 → 결과)</b> 삼중항을 뽑고 → 같은 뜻 표현을 <b>표준 용어로 통일</b>(예: aggregate formation → aggregation) → 같은 관계가 몇 번 나왔는지 <b>세어서</b> 엣지 표를 만듭니다.</p>
+        <p style="margin:6px 0;color:var(--soft);font-size:13.5px">입력: step2 CSV · 출력: <code>step3_edges.csv</code> · 원본 32,939 엣지 (이게 그래프 재료 = 모델 교과서)</p>
+      </div>
+
+      <div class="step" style="padding-left:16px;border-left:6px solid #ec4899">
+        <h3 style="margin:4px 0">STEP 4 · 학습 (mAb-GATED)</h3>
+        <p style="margin:6px 0">그 엣지 표로 <b>예측 AI를 학습</b>합니다. 그래프에서 안정성 노드를 가리고 이웃으로 맞히는 '빈칸 채우기' 모델 — 자세한 작동은 아래 <a href="#concept">모델 자세히</a>에서.</p>
+        <p style="margin:6px 0;color:var(--soft);font-size:13.5px">입력: step3 CSV(또는 공개 엣지) · 출력: 학습된 모델 · GPU 필요</p>
+      </div>
     </div>
   </section>
 
@@ -317,24 +350,66 @@
     </div>
   </section>
 
-  <!-- 6. GATED 개념 -->
+  <!-- 6. 모델 자세히 -->
   <section id="concept">
     <div class="card">
-      <h2><span class="num" style="background:linear-gradient(135deg,#8b5cf6,#db2777)">🧠</span>GATED 모델은? (개념만)</h2>
-      <p class="lead">한 줄 요약: <b>그래프 속 “빈칸 채우기”</b> 입니다.</p>
-      <img class="diagram" src="img/diagram_gated.svg" alt="mAb-GATED 빈칸 채우기: 이웃 노드 → PubMedBERT → GAT → Transformer → 가려진 안정성 노드 예측">
+      <h2><span class="num" style="background:linear-gradient(135deg,#8b5cf6,#db2777)">🧠</span>모델 자세히 — mAb-GATED (쉽게)</h2>
+      <p class="lead">파이프라인의 마지막. 그래프에서 배운 패턴으로 <b>안정성을 예측</b>하는 AI입니다. 어려워 보여도 하나씩 풀면 간단해요.</p>
+
+      <h3 style="margin:20px 0 6px">① 무슨 문제를 푸나 — '빈칸 채우기'</h3>
+      <p>영어 빈칸 추론과 똑같습니다. 주변 단서(원인 조건)를 보고 가려진 답(안정성 지표)을 맞혀요.</p>
       <div class="codebox">
 <span class="c"># 주변 이웃(원인 조건)만 보고, 가려진 '안정성 지표'를 맞히기</span>
-보기 : high concentration(고농도), agitation(진탕), low pH …  <span class="c"># ← 결정요인</span>
+보기 : high concentration(고농도), agitation(진탕), low pH …  <span class="c"># ← 원인 이웃</span>
 빈칸 : 여기서 터질 안정성 문제는?  → ( <span class="k">???</span> )
 정답 : <span class="s">aggregation (응집)</span>
       </div>
-      <p>이렇게 잘 맞히면 → 새 항체·새 제형에서 <b>어떤 위험이 클지 예측</b>할 수 있다는 뜻. 즉 "40년 문헌의 인과 패턴은 학습 가능하다"는 증거예요.</p>
+      <p>잘 맞히면 → 새 항체·새 제형에서 <b>어떤 위험이 클지 미리 예측</b>. 즉 "문헌의 인과 패턴은 <b>학습 가능</b>하다"는 증거예요.</p>
+
+      <img class="diagram" src="img/diagram_gated.svg" alt="mAb-GATED: 입력 이웃 → PubMedBERT → GAT → Transformer → 가려진 안정성 노드 예측">
+
+      <h3 style="margin:20px 0 6px">② 입력은 어떻게 생겼나</h3>
+      <p>문제 하나(샘플) = 정답 노드 1개를 가리고, 그 <b>이웃들</b>을 보여줍니다.</p>
       <table class="kv">
-        <tr><td>랜덤 / 빈도 / DistMult</td><td>Hits@1 8.6% / 36.6% / 16.8% (베이스라인)</td></tr>
-        <tr><td><b>mAb-GATED</b></td><td><b>Hits@1 84.6%</b> (테스트), 화학 안정성은 <b>99%</b> — 단순 기법을 압도</td></tr>
+        <tr><td>이웃 구성</td><td>6개 카테고리 × 각 5개 = 최대 <b>30개</b> 이웃 노드</td></tr>
+        <tr><td>각 이웃이 담는 정보</td><td>[어떤 노드 · 어느 카테고리 · 무슨 관계 · <b>직접(1칸)인가 간접(2칸)인가</b>]</td></tr>
+        <tr><td>빈도 가중</td><td>자주 보고된 관계일수록 더 자주 등장 → 중요한 단서에 무게를 더 줌</td></tr>
       </table>
-      <div class="note tip">📚 더 깊은 설명은 패키지의 <code>01_교안_강사용.md</code> · <code>02_쉬운설명_학생용.md</code> 를 참고하세요.</div>
+      <div class="note tip">💡 '간접(2칸)'이란? <b>원인의 원인</b>. 예: <code>저장온도 → 분해산물 → 응집</code> 처럼 한 다리 건넌 단서도 함께 봅니다. (그래프라서 가능한 강점)</div>
+
+      <h3 style="margin:20px 0 6px">③ 모델의 4단계 두뇌</h3>
+      <table class="kv">
+        <tr><td>① PubMedBERT 임베딩</td><td>단어를 <b>'의미 숫자'</b>로. sucrose·trehalose가 비슷하다는 걸 미리 앎 — <i>의학 사전을 주고 시작</i>해 빠르고 똑똑.</td></tr>
+        <tr><td>② GAT (그래프 어텐션)</td><td>그래프에서 <b>이웃 정보를 모으되 중요한 이웃에 더 집중.</b> (회의에서 핵심 발언자에게 더 귀 기울이기)</td></tr>
+        <tr><td>③ Transformer 인코더</td><td>여러 원인을 <b>서로 비교·종합</b>해 하나의 '문맥'으로. (단서를 종합하는 탐정)</td></tr>
+        <tr><td>④ 디코더 + 출력</td><td>그 문맥으로 <b>정답 노드를 생성.</b> 단, 같은 종류(물리/화학/생물) 후보 안에서만 고름(공정한 객관식).</td></tr>
+      </table>
+      <p style="color:var(--soft);font-size:13.5px">학습되는 숫자(파라미터)는 약 <b>320만 개</b> — 요즘 AI 기준 작지만 충분히 똑똑합니다.</p>
+
+      <h3 style="margin:20px 0 6px">④ 어떻게 '학습'하나 — 오답노트로 공부</h3>
+      <p>수천 문제(이웃 → 정답)를 풀게 하고, <b>틀리면 정답 쪽으로 내부 숫자를 아주 조금씩 조정</b>(역전파). 수백 번 반복하면 점점 잘 맞혀요.</p>
+      <table class="kv">
+        <tr><td>70 / 15 / 15</td><td>공부용 · 모의고사 · 실전. <b>실전(test)은 학습에 절대 안 씀</b>(공정한 평가)</td></tr>
+        <tr><td>constrained 손실</td><td>물리/화학/생물 <b>같은 종류 안에서만 채점</b> → 난이도를 공정하게</td></tr>
+        <tr><td>early stopping</td><td>모의고사 점수가 더 안 오르면 <b>자동 정지</b>(과적합 방지)</td></tr>
+      </table>
+
+      <h3 style="margin:20px 0 6px">⑤ 점수 읽는 법</h3>
+      <table class="kv">
+        <tr><td>Hits@1</td><td>정답을 <b>1등</b>으로 맞힌 비율 (높을수록 좋음)</td></tr>
+        <tr><td>Hits@3</td><td>정답이 <b>상위 3개</b> 안에 든 비율</td></tr>
+        <tr><td>MRR</td><td>정답 순위의 역수 평균 (1등=1.0, 2등=0.5, 3등=0.33…) → 전체 순위 품질</td></tr>
+      </table>
+      <p>비교 대상(베이스라인): <b>랜덤</b>(찍기) · <b>빈도</b>(많이 나온 답 찍기) · <b>DistMult</b>(단순 그래프 모델). 이들을 크게 앞서야 '진짜 학습했다'고 할 수 있어요.</p>
+
+      <h3 style="margin:20px 0 6px">⑥ 결과</h3>
+      <table class="kv">
+        <tr><td>랜덤 / 빈도 / DistMult</td><td>Hits@1 8.6% / 36.6% / 16.8%</td></tr>
+        <tr><td><b>mAb-GATED</b></td><td><b>Hits@1 84.6%</b>(테스트) · MRR 0.88 · <b>화학 안정성 99%</b> — 단순 기법을 압도</td></tr>
+      </table>
+      <p>→ "문헌에 흩어진 40년치 인과 패턴은 <b>실제로 학습 가능</b>하다"가 입증됐습니다.</p>
+
+      <div class="note tip">🚀 <b>직접 학습해 보기:</b> <a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step4_gated.ipynb" target="_blank" rel="noopener">step4_gated 노트북</a> (Colab + 무료 GPU). 데이터가 적으면 공개 엣지로 자동 학습하고, 노트북 안에도 각 부분 설명이 들어 있어요.</div>
     </div>
   </section>
 
