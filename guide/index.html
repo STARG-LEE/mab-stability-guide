@@ -169,6 +169,7 @@
     <a href="#ready">준비물</a>
     <a href="#secret">비밀 등록</a>
     <a href="#run">실행하기</a>
+    <a href="#full">전체 재현</a>
     <a href="#graph">그래프 읽기</a>
     <a href="#concept">GATED 개념</a>
     <a href="#faq">문제 해결</a>
@@ -263,6 +264,23 @@
       </div>
 
       <div class="note tip">📥 <b>내 노트북으로 저장:</b> Colab에서 <b>파일 → 드라이브에 사본 저장</b>을 누르면 내 구글 드라이브로 복사돼 자유롭게 수정·실행할 수 있어요.</div>
+    </div>
+  </section>
+
+  <!-- 4.5 전체 재현 -->
+  <section id="full">
+    <div class="card">
+      <h2><span class="num" style="background:linear-gradient(135deg,#0f766e,#0e7490)">🔬</span>전체 연구 파이프라인 재현 (step1~4)</h2>
+      <p class="lead">위 '파이프라인 실습'이 한 노트북 요약본이라면, 이건 <b>원본 연구의 4단계를 그대로</b> 따라하는 버전입니다. 사설 DB 없이 <b>CSV로 단계가 연결</b>돼요.</p>
+      <div class="codebox" style="font-size:12.5px">step1 ─▶ step1_abstracts.csv ─▶ step2 ─▶ step2_filtered.csv ─▶ step3 ─▶ step3_edges.csv ─▶ step4 (GATED)</div>
+      <table class="kv">
+        <tr><td>① 수집</td><td><a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step1_collect.ipynb" target="_blank" rel="noopener">step1_collect</a> — PubMed 초록 수집 (키 불필요)</td></tr>
+        <tr><td>② 필터</td><td><a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step2_filter.ipynb" target="_blank" rel="noopener">step2_filter</a> — GPT 관련성 선별 (키 필요)</td></tr>
+        <tr><td>③ 추출</td><td><a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step3_extract.ipynb" target="_blank" rel="noopener">step3_extract</a> — 인과관계 추출·표준화·집계 (키 필요)</td></tr>
+        <tr><td>④ 학습</td><td><a href="https://colab.research.google.com/github/STARG-LEE/mab-stability-guide/blob/main/notebooks/full/step4_gated.ipynb" target="_blank" rel="noopener">step4_gated</a> — mAb-GATED 학습 (<b>GPU 런타임</b> 필요)</td></tr>
+      </table>
+      <div class="note tip">📖 자세한 순서·규모·비용 안내: <a href="https://github.com/STARG-LEE/mab-stability-guide/tree/main/notebooks/full" target="_blank" rel="noopener">notebooks/full 안내(README)</a> · step1→2→3→4 순서로 같은 세션에서 이어 실행하면 CSV가 자동으로 넘어갑니다.</div>
+      <div class="note warn">⚠️ step4는 GPU가 필요합니다(Colab: 런타임 → 런타임 유형 변경 → T4 GPU). 데이터가 적으면 공개 엣지(2,436개)로 자동 학습합니다.</div>
     </div>
   </section>
 

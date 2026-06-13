@@ -57,6 +57,8 @@ mab_teaching_package/
 > GitHub에 올리면 학생이 **Colab 버튼**으로 바로 실행 — 방법은 [04_웹가이드_배포방법.md](04_웹가이드_배포방법.md) 참고.
 > 영문 파일명 노트북(`*_practice.ipynb`, `*_draw_graph.ipynb`)은 Colab 링크용 사본입니다.
 
+> 🔬 **원본 4단계를 그대로 재현하고 싶다면:** `notebooks/full/` 에 **재현용 step1~4**(사설 DB 제거·CSV 연결·자격증명 없음)가 있습니다 — [full/README](notebooks/full/README.md) 참고. 누구나 Colab + OpenAI 키로 따라할 수 있습니다.
+
 ---
 
 ## 🚀 추천 학습 순서
