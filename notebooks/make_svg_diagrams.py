@@ -103,7 +103,7 @@ def pipeline():
 
 # ════════════════ 2) 인과 사슬 ════════════════
 def chain():
-    W, H = 1100, 300
+    W, H = 1240, 300
     s = header(W, H).replace("{GRADS}", GRADS)
     s += text(W/2, 38, "안정성을 둘러싼 두 질문 = 인과 사슬", size=22, color="#0f172a", weight=800)
     # 결정요인 컨테이너
@@ -121,13 +121,13 @@ def chain():
         s += text(bx+chw/2, byy+27, ko, size=15, color="#1e293b", weight=800)
         s += text(bx+chw/2, byy+45, en, size=12, color="#334155", weight=600)
     midy = cy_ + ch/2
-    # 안정성
-    stx, stw = 470, 156
+    # 안정성 (라벨이 칸과 겹치지 않게 박스 사이 간격을 넓게)
+    stx, stw = 558, 150
     s += box(stx, midy-58, stw, 116, "url(#gRed)",
              ["안정성 지표", "Stability", "응집·점도·산화…"], sizes=[16, 13, 14],
              colors=["#fff", "#fee2e2", "#fff"])
     # 결과
-    oux, ouw = 760, 316
+    oux, ouw = 858, 362
     s += box(oux, midy-58, ouw, 116, "url(#gOut)",
              ["임상·품질 결과", "Outcomes", "효능·면역원성·약동학"], sizes=[16, 13, 14],
              colors=["#fff", "#ffedd5", "#fff"])
