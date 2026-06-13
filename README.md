@@ -5,6 +5,8 @@
 > 그 패턴이 학습 가능한지 **mAb-GATED** 모델로 검증하는 연구입니다.
 > 이 패키지는 학생이 **직접 그래프를 그리는 데까지** 따라올 수 있게 만든 수업 자료 묶음입니다.
 
+🌐 **라이브 그림책 가이드 → https://starg-lee.github.io/mab-stability-guide/guide/** (Colab 버튼으로 바로 실습!)
+
 원본 연구: STARG-LEE / [mab-causal-network-v2](https://github.com/STARG-LEE/mab-causal-network-v2) · 인터랙티브 그래프: [웹페이지](https://starg-lee.github.io/mab-causal-network-v2/)
 
 ![네트워크 백본 예시](images/03_network_backbone.png)
